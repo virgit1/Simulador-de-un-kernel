@@ -224,7 +224,7 @@ void *scheduler(void *s)
         pthread_mutex_lock(&mutexTimer);
         if (memoria.timer == 1)
         {
-            quitarProcesos(queuesstruct, machine);
+            update(queuesstruct, machine);
             for (i = 0; i < (cores * hilos); i++)
             {
                 if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 1)
@@ -237,4 +237,10 @@ void *scheduler(void *s)
         }
         pthread_mutex_unlock(&mutexTimer);
     }
+}
+
+
+void borrarDatos(){
+    borrarColas(queuesstruct);
+    borrarMachine(machine);
 }
