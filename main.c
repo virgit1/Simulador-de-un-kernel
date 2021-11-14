@@ -137,7 +137,7 @@ void start(int cpus, int cores, int hilos)
     queuesstruct = crearQueuesStruct(PRIORIDADES, NUMPROCESOS);
 
     sem_init(&sem, 0, 0);
-    createMachine(cpus, cores, hilos);
+    machine = crearMachine(cpus, cores, hilos);
     pthread_mutex_init(&mutexProcesos, NULL);
     pthread_mutex_init(&mutexTimer, NULL);
     pthread_mutex_init(&mutexSec, NULL);
@@ -211,7 +211,7 @@ void *scheduler(void *s)
         {
             for (i = 0; i < (cores * hilos); i++)
             {
-                if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 0)
+                if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 1)
                 {
 
                     quitarDeCola(queuesstruct);
@@ -227,7 +227,7 @@ void *scheduler(void *s)
             quitarProcesos(queuesstruct, machine);
             for (i = 0; i < (cores * hilos); i++)
             {
-                if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 0)
+                if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 1)
                 {
 
                     quitarDeCola(queuesstruct);
