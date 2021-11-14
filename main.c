@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     pthread_create(&idTimer.tid, NULL, timer, &idTimer.t);
     pthread_create(&idProcessGenerator.tid, NULL, processGenerator, &idProcessGenerator.pq);
     pthread_create(&idScheduler.tid, NULL, scheduler, &idScheduler.s);
-    sleep(10);
+    sleep(2);
     borrarDatos("FIN\n");
 
     return 0;
@@ -133,6 +133,7 @@ int main(int argc, char *argv[])
 
 void start(int cpus, int cores, int hilos)
 {
+
 
     memoria.proceso = 0;
     memoria.timer = 0;

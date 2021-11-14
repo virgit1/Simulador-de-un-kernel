@@ -89,7 +89,7 @@ MACHINE *crearMachine(int cpus, int cores, int hilos)
     for (i = 0; i < cpus; i++)
     {
         CPU *cpus = crearCPU(i, cores);
-        for (j = 0; j < cores; cores++)
+        for (j = 0; j < cores; j++)
         {
             Core *cores = crearCore(j, hilos);
             for (k = 0; k < hilos; k++)
