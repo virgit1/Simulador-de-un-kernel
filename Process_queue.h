@@ -5,7 +5,8 @@
 #include <semaphore.h>
 #include "PCB.h"
 
-typedef struct Process_queue{
+typedef struct Process_queue
+{
 
     int maxProcesos;
     int tam;
@@ -20,16 +21,17 @@ typedef struct QueuesStruct
 {
     Process_queue *queues;
     int numColas;
-}QueuesStruct;
+} QueuesStruct;
 
 /**************************************************************
  *****************   INICIALIZACION COLAS  ********************
  *************************************************************/
 
-Process_queue *crearQueue(int numProcesos, int prioridad){
+Process_queue *crearQueue(int numProcesos, int prioridad)
+{
     Process_queue *q;
-    q = (Process_queue*)malloc(sizeof(Process_queue));
-    q->pcbs = (PCB*)malloc(sizeof(PCB)*numProcesos*5);
+    q = (Process_queue *)malloc(sizeof(Process_queue));
+    q->pcbs = (PCB *)malloc(sizeof(PCB) * numProcesos * 5);
     q->tam = 0;
     q->maxProcesos = numProcesos;
     q->primero = 0;
@@ -38,13 +40,15 @@ Process_queue *crearQueue(int numProcesos, int prioridad){
     return q;
 }
 
-QueuesStruct *crearQueuesStruct(int numProcesos, int prioridades){
+QueuesStruct *crearQueuesStruct(int numProcesos, int prioridades)
+{
     QueuesStruct *qs;
-    qs = (QueuesStruct*)malloc(sizeof(QueuesStruct));
+    qs = (QueuesStruct *)malloc(sizeof(QueuesStruct));
     qs->numColas = prioridades;
-    qs->queues = (QueuesStruct*)malloc(sizeof(QueuesStruct)*prioridades);
+    qs->queues = (Process_queue *)malloc(sizeof(QueuesStruct) * prioridades);
     int i;
-    for(i=0; i<prioridades; i++){
+    for (i = 0; i < prioridades; i++)
+    {
         Process_queue *q = crearQueue(numProcesos, prioridades - i);
         qs->queues[i] = *q;
     }
@@ -55,54 +59,72 @@ QueuesStruct *crearQueuesStruct(int numProcesos, int prioridades){
  *****************   FUNCIONES AUXILIARES  ********************
  *************************************************************/
 
-int colaVacia(Process_queue *q){
-    if(q->tam == 0){
+int colaVacia(Process_queue *q)
+{
+    if (q->tam == 0)
+    {
         return 0;
-    }else{
+    }
+    else
+    {
         return 1;
     }
 }
 
-int quitarPrimero(Process_queue *q){
-    if(q->tam==0){
+int quitarPrimero(Process_queue *q)
+{
+    if (q->tam == 0)
+    {
         return 1;
-    } else{
+    }
+    else
+    {
         q->tam--;
         q->primero++;
         return 0;
     }
 }
 
-void quitarCola(QueuesStruct *qs){
+void quitarDeCola(QueuesStruct *qs)
+{
     int i;
-    for(i = 0; i<qs->numColas; i++){
-        if(quitarPrimero(&qs->queues[i]) == 0){
+    for (i = 0; i < qs->numColas; i++)
+    {
+        if (quitarPrimero(&qs->queues[i]) == 0)
+        {
             exit;
         }
     }
 }
 
-PCB *primero(Process_queue *q){
-    if(q->tam == 0){
+PCB *primero(Process_queue *q)
+{
+    if (q->tam == 0)
+    {
         printf("Cola Vacia\n");
-        return crearPCB(0,0,0);
+        return crearPCB(0, 0, 0);
     }
     PCB *pcb = &q->pcbs[q->primero];
     return pcb;
 }
 
-PCB *primeroEnCola(QueuesStruct *qs){
+PCB *primeroEnCola(QueuesStruct *qs)
+{
     int i;
-    for(i=0; i<qs->numColas; i++){
-        if(colaVacia(&qs->queues[i]) == 1){
+    for (i = 0; i < qs->numColas; i++)
+    {
+        if (colaVacia(&qs->queues[i]) == 1)
+        {
             return primero(&qs->queues[i]);
         }
     }
-    return crearPCB(0,0,0);
+    return crearPCB(0, 0, 0);
 }
 
-void addEnCola(Process_queue *q, PCB *proceso){
-    if(q->tam != q->maxProcesos){
+void addEnCola(Process_queue *q, PCB *proceso)
+{
+    if (q->tam != q->maxProcesos)
+    {
         q->tam++;
         q->ultimo++;
         q->pcbs[q->ultimo] = *proceso;
@@ -110,10 +132,13 @@ void addEnCola(Process_queue *q, PCB *proceso){
     exit;
 }
 
-void addCola(QueuesStruct *qs, PCB *proceso){
+void addCola(QueuesStruct *qs, PCB *proceso)
+{
     int i;
-    for(i = 0; i<qs->numColas; i++){
-        if(proceso->numPrioridad == &qs->queues[i].prioridad){
+    for (i = 0; i < qs->numColas; i++)
+    {
+        if (proceso->numPrioridad == qs->queues[i].prioridad)
+        {
             addEnCola(&qs->queues[i], proceso);
             exit;
         }
@@ -124,13 +149,16 @@ void addCola(QueuesStruct *qs, PCB *proceso){
  ********************   BORRAR COLAS  *************************
  *************************************************************/
 
-void borrarCola(Process_queue *q){
+void borrarCola(Process_queue *q)
+{
     free(q);
 }
 
-void borrarColas(QueuesStruct *qs){
+void borrarColas(QueuesStruct *qs)
+{
     int i;
-    for(i=0; i<qs->numColas; i++){
+    for (i = 0; i < qs->numColas; i++)
+    {
         borrarCola(&qs->queues[i]);
     }
     free(qs);

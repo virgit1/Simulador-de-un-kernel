@@ -140,7 +140,7 @@ void verCPU(CPU *cpu)
     }
 }
 
-void VerEstado(MACHINE *machine)
+void verEstado(MACHINE *machine)
 {
     int i;
     printf("MACHINE: \n");
@@ -187,7 +187,7 @@ int insertarPCBenCPU(CPU *cpu, PCB *pcb)
     int i;
     for (i = 0; i < cpu->numCores; i++)
     {
-        if (insertarPCBenHilo(&cpu->cores[i], pcb) == 0)
+        if (insertarPCBenCore(&cpu->cores[i], pcb) == 0)
         {
             return 1;
         }
@@ -241,7 +241,7 @@ void downTimeCPU(CPU *cpu)
     int i;
     for (i = 0; i < cpu->numCores; i++)
     {
-        downTimeoHilo(&cpu->cores[i]);
+        downTimeCore(&cpu->cores[i]);
     }
 }
 

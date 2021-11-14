@@ -16,6 +16,7 @@ void *clock_();
 void *timer();
 void *processGenerator();
 void *scheduler();
+void borrarDatos();
 
 typedef struct memoriaCompartida
 {
@@ -124,6 +125,8 @@ int main(int argc, char *argv[])
     pthread_create(&idTimer.tid, NULL, timer, &idTimer.t);
     pthread_create(&idProcessGenerator.tid, NULL, processGenerator, &idProcessGenerator.pq);
     pthread_create(&idScheduler.tid, NULL, scheduler, &idScheduler.s);
+    sleep(10);
+    borrarDatos("FIN\n");
 
     return 0;
 }
@@ -136,11 +139,11 @@ void start(int cpus, int cores, int hilos)
     memoria.sec = 0;
     queuesstruct = crearQueuesStruct(PRIORIDADES, NUMPROCESOS);
 
-    sem_init(&sem, 0, 0);
     machine = crearMachine(cpus, cores, hilos);
     pthread_mutex_init(&mutexProcesos, NULL);
     pthread_mutex_init(&mutexTimer, NULL);
     pthread_mutex_init(&mutexSec, NULL);
+    sem_init(&sem, 0, 0);
 }
 
 void *clock_(void *c)
@@ -192,7 +195,7 @@ void *processGenerator(void *pq)
     {
         int tiempoVida = ((rand() % TIEMPO_EXPIRACION) + 1);
         int numPrioridad = ((rand() % TIEMPOMAXPROCESO) + 1);
-        PCB *pcb = createPCB(i, tiempoVida, numPrioridad);
+        PCB *pcb = crearPCB(i, tiempoVida, numPrioridad);
         pthread_mutex_lock(&mutexProcesos);
         addCola(queuesstruct, pcb);
         memoria.proceso = 1;
@@ -239,8 +242,8 @@ void *scheduler(void *s)
     }
 }
 
-
-void borrarDatos(){
+void borrarDatos()
+{
     borrarColas(queuesstruct);
     borrarMachine(machine);
 }
