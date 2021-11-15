@@ -7,7 +7,7 @@
 #include "MACHINE.h"
 
 #define NUMPROCESOS 100
-#define PRIORIDADES 3
+#define PRIORIDADES 5
 #define TIEMPO_EXPIRACION 5
 #define TIEMPOMAXPROCESO 25
 
@@ -121,11 +121,11 @@ int main(int argc, char *argv[])
     idProcessGenerator.pq = 0;
     idScheduler.s = 0;
 
+    pthread_create(&idProcessGenerator.tid, NULL, processGenerator, &idProcessGenerator.pq);
     pthread_create(&idClock.tid, NULL, clock_, &idClock.c);
     pthread_create(&idTimer.tid, NULL, timer, &idTimer.t);
-    pthread_create(&idProcessGenerator.tid, NULL, processGenerator, &idProcessGenerator.pq);
     pthread_create(&idScheduler.tid, NULL, scheduler, &idScheduler.s);
-    sleep(2);
+    sleep(100);
     borrarDatos("FIN\n");
 
     return 0;
@@ -133,8 +133,6 @@ int main(int argc, char *argv[])
 
 void start(int cpus, int cores, int hilos)
 {
-
-
     memoria.proceso = 0;
     memoria.timer = 0;
     memoria.sec = 0;
@@ -152,13 +150,13 @@ void *clock_(void *c)
     memoria.sec = 0;
     while (1)
     {
-
-        sleep(1);
+        sleep(2);
         pthread_mutex_lock(&mutexSec);
         memoria.sec++;
         printf("TIEMPO DE EJECUCION:  %d\n", memoria.sec);
 
         downTime(machine);
+
 
         pthread_mutex_lock(&mutexProcesos);
         memoria.proceso = 1;
@@ -172,8 +170,8 @@ void *clock_(void *c)
 
 void *timer(void *t)
 {
-    int contador;
-    memoria.sec = 0;
+    int contador = 0;
+    memoria.timer = 0;
     while (1)
     {
         sem_wait(&sem);
@@ -194,14 +192,15 @@ void *processGenerator(void *pq)
     int i;
     for (i = 1; i <= NUMPROCESOS; i++)
     {
-        int tiempoVida = ((rand() % TIEMPO_EXPIRACION) + 1);
-        int numPrioridad = ((rand() % TIEMPOMAXPROCESO) + 1);
+        int tiempoVida = ((rand() % TIEMPOMAXPROCESO) + 1);
+        int numPrioridad = ((rand() % PRIORIDADES) + 1);
+        int procesleep = ((rand() % TIEMPO_EXPIRACION) + 1);
         PCB *pcb = crearPCB(i, tiempoVida, numPrioridad);
         pthread_mutex_lock(&mutexProcesos);
         addCola(queuesstruct, pcb);
         memoria.proceso = 1;
         pthread_mutex_unlock(&mutexProcesos);
-        sleep(4);
+        sleep(procesleep);
     }
 }
 
@@ -213,14 +212,10 @@ void *scheduler(void *s)
         pthread_mutex_lock(&mutexProcesos);
         if (memoria.proceso == 1)
         {
-            for (i = 0; i < (cores * hilos); i++)
-            {
-                if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 1)
+                if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 0)
                 {
-
                     quitarDeCola(queuesstruct);
                 }
-            }
             memoria.proceso = 0;
         }
         pthread_mutex_unlock(&mutexProcesos);
@@ -229,14 +224,11 @@ void *scheduler(void *s)
         if (memoria.timer == 1)
         {
             update(queuesstruct, machine);
-            for (i = 0; i < (cores * hilos); i++)
-            {
-                if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 1)
+                if (insertarPCB(machine, primeroEnCola(queuesstruct)) == 0)
                 {
 
                     quitarDeCola(queuesstruct);
                 }
-            }
             memoria.timer = 0;
         }
         pthread_mutex_unlock(&mutexTimer);

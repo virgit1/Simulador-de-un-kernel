@@ -8,6 +8,7 @@ typedef struct PCB {
 
     int pid;
     int tiempoVida;
+    int tiempototal;
     int numPrioridad;
 
 } PCB;
@@ -21,6 +22,7 @@ PCB *crearPCB(int id, int tiempoVida, int prioridad){
     pcb = (PCB*)malloc(sizeof(PCB));
     pcb->pid = id;
     pcb->tiempoVida = tiempoVida;
+    pcb->tiempototal = tiempoVida;
     pcb->numPrioridad = prioridad;
     return pcb;
 }
@@ -30,7 +32,7 @@ PCB *crearPCB(int id, int tiempoVida, int prioridad){
  *************************************************************/
 
 int downTimePCB(PCB *pcb){
-    pcb->tiempoVida--;
+    pcb->tiempoVida = pcb->tiempoVida - 1;
     if(pcb->tiempoVida == 0){
         return 1;
     }else{
@@ -42,7 +44,7 @@ int minusPrioridadPCB(PCB *pcb){
     if(pcb->numPrioridad == 0 || pcb->numPrioridad == 1){
         return 1;
     }else{
-        pcb->numPrioridad--;
+        pcb->numPrioridad = pcb->numPrioridad - 1;
         return 0;
     }
 }
@@ -52,5 +54,6 @@ int minusPrioridadPCB(PCB *pcb){
  *************************************************************/
 
 void verPCB(PCB *pcb){
-    printf("PCB = %d, Tiempo de Vida = %d, Prioridad = %d \n", pcb->pid, pcb->tiempoVida, pcb->numPrioridad);
+    printf("PCB = %d    TIEMPO TOTAL = %d     Tiempo de Vida = %d   Prioridad = %d \n", pcb->pid, pcb->tiempototal, pcb->tiempoVida, pcb->numPrioridad);
+    return;
 }

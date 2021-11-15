@@ -88,18 +88,18 @@ MACHINE *crearMachine(int cpus, int cores, int hilos)
     int i, j, k;
     for (i = 0; i < cpus; i++)
     {
-        CPU *cpus = crearCPU(i, cores);
+        CPU *cpu = crearCPU(i, cores);
         for (j = 0; j < cores; j++)
         {
-            Core *cores = crearCore(j, hilos);
+            Core *core = crearCore(j, hilos);
             for (k = 0; k < hilos; k++)
             {
-                Hilo *hilos = crearHilo(k);
-                cores->hilos[k] = *hilos;
+                Hilo *hilo = crearHilo(k + j*hilos);
+                core->hilos[k] = *hilo;
             }
-            cpus->cores[j] = *cores;
+            cpu->cores[j] = *core;
         }
-        machine->cpus[i] = *cpus;
+        machine->cpus[i] = *cpu;
     }
     return machine;
 }
@@ -125,7 +125,7 @@ void verCore(Core *core)
     int i;
     for (i = 0; i < core->numHilos; i++)
     {
-        printf("Hilo %d: ", core->hilos[i].id);
+        printf("                Hilo %d: ", core->hilos[i].id);
         verHilo(&core->hilos[i]);
     }
 }
@@ -135,7 +135,7 @@ void verCPU(CPU *cpu)
     int i;
     for (i = 0; i < cpu->numCores; i++)
     {
-        printf("Core %d:  \n", cpu->cores[i].id);
+        printf("            Core %d:  \n", cpu->cores[i].id);
         verCore(&cpu->cores[i]);
     }
 }
@@ -143,10 +143,10 @@ void verCPU(CPU *cpu)
 void verEstado(MACHINE *machine)
 {
     int i;
-    printf("MACHINE: \n");
+    printf("    MACHINE: \n");
     for (i = 0; i < machine->numCpus; i++)
     {
-        printf("Cpu %d:  \n", machine->cpus[i].id);
+        printf("        CPU %d:  \n", machine->cpus[i].id);
         verCPU(&machine->cpus[i]);
     }
 }
@@ -161,11 +161,11 @@ int insertarPCBenHilo(Hilo *hilo, PCB *pcb)
     {
         hilo->pcb = pcb;
         hilo->free = 0;
-        return 1;
+        return 0;
     }
     else
     {
-        return 0;
+        return 1;
     }
 }
 
@@ -176,10 +176,10 @@ int insertarPCBenCore(Core *core, PCB *pcb)
     {
         if (insertarPCBenHilo(&core->hilos[i], pcb) == 0)
         {
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
 
 int insertarPCBenCPU(CPU *cpu, PCB *pcb)
@@ -189,10 +189,10 @@ int insertarPCBenCPU(CPU *cpu, PCB *pcb)
     {
         if (insertarPCBenCore(&cpu->cores[i], pcb) == 0)
         {
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
 
 int insertarPCB(MACHINE *machine, PCB *pcb)
@@ -204,11 +204,11 @@ int insertarPCB(MACHINE *machine, PCB *pcb)
         {
             if (insertarPCBenCPU(&machine->cpus[i], pcb) == 0)
             {
-                return 1;
+                return 0;
             }
         }
     }
-    return 0;
+    return 1;
 }
 
 /**************************************************************
@@ -266,7 +266,7 @@ void updateHilo(QueuesStruct *qs, Hilo *hilo)
         minusPrioridadPCB(hilo->pcb);
         addCola(qs, hilo->pcb);
         hilo->pcb = crearPCB(0, 0, 0);
-        hilo->free = 0;
+        hilo->free = 1;
     }
 }
 

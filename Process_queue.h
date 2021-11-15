@@ -40,12 +40,12 @@ Process_queue *crearQueue(int numProcesos, int prioridad)
     return q;
 }
 
-QueuesStruct *crearQueuesStruct(int numProcesos, int prioridades)
+QueuesStruct *crearQueuesStruct(int prioridades, int numProcesos)
 {
     QueuesStruct *qs;
     qs = (QueuesStruct *)malloc(sizeof(QueuesStruct));
     qs->numColas = prioridades;
-    qs->queues = (Process_queue *)malloc(sizeof(QueuesStruct) * prioridades);
+    qs->queues = (Process_queue *)malloc(sizeof(Process_queue) * prioridades);
     int i;
     for (i = 0; i < prioridades; i++)
     {
@@ -92,7 +92,7 @@ void quitarDeCola(QueuesStruct *qs)
     {
         if (quitarPrimero(&qs->queues[i]) == 0)
         {
-            exit;
+            return;
         }
     }
 }
@@ -129,7 +129,7 @@ void addEnCola(Process_queue *q, PCB *proceso)
         q->ultimo++;
         q->pcbs[q->ultimo] = *proceso;
     }
-    exit;
+    return;
 }
 
 void addCola(QueuesStruct *qs, PCB *proceso)
@@ -140,7 +140,7 @@ void addCola(QueuesStruct *qs, PCB *proceso)
         if (proceso->numPrioridad == qs->queues[i].prioridad)
         {
             addEnCola(&qs->queues[i], proceso);
-            exit;
+            return;
         }
     }
 }
