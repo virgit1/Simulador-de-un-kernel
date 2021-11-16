@@ -31,7 +31,7 @@ Process_queue *crearQueue(int numProcesos, int prioridad)
 {
     Process_queue *q;
     q = (Process_queue *)malloc(sizeof(Process_queue));
-    q->pcbs = (PCB *)malloc(sizeof(PCB) * numProcesos * 5);
+    q->pcbs = (PCB *)malloc(sizeof(PCB) * numProcesos);
     q->tam = 0;
     q->maxProcesos = numProcesos;
     q->primero = 0;

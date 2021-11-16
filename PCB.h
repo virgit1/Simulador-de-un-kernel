@@ -8,8 +8,8 @@ typedef struct PCB {
 
     int pid;
     int tiempoVida;
-    int tiempototal;
     int numPrioridad;
+    int tiempototal;
 
 } PCB;
 
@@ -54,6 +54,6 @@ int minusPrioridadPCB(PCB *pcb){
  *************************************************************/
 
 void verPCB(PCB *pcb){
-    printf("PCB = %d    TIEMPO TOTAL = %d     Tiempo de Vida = %d   Prioridad = %d \n", pcb->pid, pcb->tiempototal, pcb->tiempoVida, pcb->numPrioridad);
+    printf("PCB = %2d      Tiempo de Vida = %2d de %2d      Prioridad = %2d \n", pcb->pid, pcb->tiempoVida, pcb->tiempototal,  pcb->numPrioridad);
     return;
 }

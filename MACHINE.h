@@ -143,7 +143,7 @@ void verCPU(CPU *cpu)
 void verEstado(MACHINE *machine)
 {
     int i;
-    printf("    MACHINE: \n");
+    printf("MACHINE: \n");
     for (i = 0; i < machine->numCpus; i++)
     {
         printf("        CPU %d:  \n", machine->cpus[i].id);
