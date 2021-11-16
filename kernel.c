@@ -18,7 +18,6 @@ void *processGenerator();
 void *scheduler();
 void borrarDatos();
 int crearNumPrioridad();
-int crearProcesleep();
 int crearTiempoVida();
 
 typedef struct memoriaCompartida
@@ -28,7 +27,7 @@ typedef struct memoriaCompartida
     int sec;
 } memoriaCompartida;
 
-typedef struct
+typedef struct 
 {
     int pq;
     pthread_t tid;
@@ -38,32 +37,30 @@ typedef struct
 {
     int c;
     pthread_t tid;
-} id_clock;
+}id_clock;
 
 typedef struct
 {
     int t;
     pthread_t tid;
-} id_timer;
+}id_timer;
 
-typedef struct
+typedef struct 
 {
     int s;
     pthread_t tid;
-} id_scheduler;
+}id_scheduler;
 
-sem_t sem;
 pthread_mutex_t mutexProcesos, mutexTimer, mutexSec;
+memoriaCompartida memoria;
 
 MACHINE *machine;
 QueuesStruct *queuesstruct;
-memoriaCompartida memoria;
-
-int cpus, cores, hilos = 1;
 
 int main(int argc, char *argv[])
 {
     srand(time(NULL));
+    int cpus = 1; int cores = 1; int hilos = 1;
     int option;
     //Parseamos los argumentos
     while ((option = getopt(argc, argv, "c::n::t::h")) != -1)
@@ -129,7 +126,7 @@ int main(int argc, char *argv[])
     pthread_create(&idTimer.tid, NULL, timer, &idTimer.t);
     pthread_create(&idScheduler.tid, NULL, scheduler, &idScheduler.s);
     sleep(100);
-    borrarDatos("FIN\n");
+    borrarDatos("SIMULADOR DE KERNEL\n");
 
     return 0;
 }
@@ -145,7 +142,6 @@ void start(int cpus, int cores, int hilos)
     pthread_mutex_init(&mutexProcesos, NULL);
     pthread_mutex_init(&mutexTimer, NULL);
     pthread_mutex_init(&mutexSec, NULL);
-    sem_init(&sem, 0, 0);
 }
 
 void *clock_(void *c)
@@ -160,13 +156,11 @@ void *clock_(void *c)
 
         downTime(machine);
 
-
         pthread_mutex_lock(&mutexProcesos);
         memoria.proceso = 1;
         pthread_mutex_unlock(&mutexProcesos);
 
         pthread_mutex_unlock(&mutexSec);
-        sem_post(&sem);
         verEstado(machine);
     }
 }
@@ -177,7 +171,6 @@ void *timer(void *t)
     memoria.timer = 0;
     while (1)
     {
-        sem_wait(&sem);
         pthread_mutex_lock(&mutexSec);
         if (memoria.sec == contador + TIEMPO_EXPIRACION)
         {
@@ -201,7 +194,8 @@ void *processGenerator(void *pq)
         addCola(queuesstruct, pcb);
         memoria.proceso = 1;
         pthread_mutex_unlock(&mutexProcesos);
-        if(i % 10 == 0){
+        if (i % 10 == 0)
+        {
             sleep(15);
         }
     }
@@ -215,10 +209,10 @@ void *scheduler(void *s)
         pthread_mutex_lock(&mutexProcesos);
         if (memoria.proceso == 1)
         {
-                while (insertarPCB(machine, primeroEnCola(queuesstruct)) == 0)
-                {
-                    quitarDeCola(queuesstruct);
-                }
+            while (insertarPCB(machine, primeroEnCola(queuesstruct)) == 0)
+            {
+                quitarDeCola(queuesstruct);
+            }
             memoria.proceso = 0;
         }
         pthread_mutex_unlock(&mutexProcesos);
@@ -227,29 +221,28 @@ void *scheduler(void *s)
         if (memoria.timer == 1)
         {
             update(queuesstruct, machine);
-                while(insertarPCB(machine, primeroEnCola(queuesstruct)) == 0)
-                {
+            while (insertarPCB(machine, primeroEnCola(queuesstruct)) == 0)
+            {
 
-                    quitarDeCola(queuesstruct);
-                }
+                quitarDeCola(queuesstruct);
+            }
             memoria.timer = 0;
         }
         pthread_mutex_unlock(&mutexTimer);
     }
 }
 
-int crearTiempoVida(){
+int crearTiempoVida()
+{
 
-    return ((rand() % TIEMPOMAXPROCESO) + 1);    
-
+    return ((rand() % TIEMPOMAXPROCESO) + 1);
 }
 
-int crearNumPrioridad(){
+int crearNumPrioridad()
+{
 
     return ((rand() % PRIORIDADES) + 1);
-
 }
-
 
 void borrarDatos()
 {
