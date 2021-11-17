@@ -60,6 +60,7 @@ QueuesStruct *queuesstruct;
 int main(int argc, char *argv[])
 {
     srand(time(NULL));
+    system("chmod u+x print.sh");
     int cpus = 1; int cores = 1; int hilos = 1;
     int option;
     //Parseamos los argumentos
@@ -147,12 +148,14 @@ void start(int cpus, int cores, int hilos)
 void *clock_(void *c)
 {
     memoria.sec = 0;
+    char buf[100];
     while (1)
     {
         sleep(1);
         pthread_mutex_lock(&mutexSec);
         memoria.sec++;
-        printf("TIEMPO DE EJECUCION:  %d\n", memoria.sec);
+        sprintf(buf, "./print.sh %d %d", 1, memoria.sec);
+        system(buf);
 
         downTime(machine);
 

@@ -94,7 +94,7 @@ MACHINE *crearMachine(int cpus, int cores, int hilos)
             Core *core = crearCore(j, hilos);
             for (k = 0; k < hilos; k++)
             {
-                Hilo *hilo = crearHilo(k + j*hilos);
+                Hilo *hilo = crearHilo(k);
                 core->hilos[k] = *hilo;
             }
             cpu->cores[j] = *core;
@@ -125,7 +125,9 @@ void verCore(Core *core)
     int i;
     for (i = 0; i < core->numHilos; i++)
     {
-        printf("                Hilo %d: ", core->hilos[i].id);
+        char buf[100];
+        sprintf(buf, "./print.sh %d %d", 5, core->hilos[i].id);
+        system(buf);;
         verHilo(&core->hilos[i]);
     }
 }
@@ -133,9 +135,11 @@ void verCore(Core *core)
 void verCPU(CPU *cpu)
 {
     int i;
+    char buf[100];
     for (i = 0; i < cpu->numCores; i++)
     {
-        printf("            Core %d:  \n", cpu->cores[i].id);
+        sprintf(buf, "./print.sh %d %d", 4, cpu->cores[i].id);
+        system(buf);
         verCore(&cpu->cores[i]);
     }
 }
@@ -143,10 +147,14 @@ void verCPU(CPU *cpu)
 void verEstado(MACHINE *machine)
 {
     int i;
-    printf("MACHINE: \n");
+    char buf[100];
+    sprintf(buf, "./print.sh %d", 2);
+    system(buf);
+
     for (i = 0; i < machine->numCpus; i++)
     {
-        printf("        CPU %d:  \n", machine->cpus[i].id);
+        sprintf(buf, "./print.sh %d %d", 3, machine->cpus[i].id);
+        system(buf);
         verCPU(&machine->cpus[i]);
     }
 }
