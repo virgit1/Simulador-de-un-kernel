@@ -154,7 +154,7 @@ void *clock_(void *c)
         sleep(1);
         pthread_mutex_lock(&mutexSec);
         memoria.sec++;
-        sprintf(buf, "./print.sh %d %d", 1, memoria.sec);
+        sprintf(buf, "bash print.sh %d %d", 1, memoria.sec);
         system(buf);
 
         downTime(machine);

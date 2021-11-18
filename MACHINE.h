@@ -126,7 +126,7 @@ void verCore(Core *core)
     for (i = 0; i < core->numHilos; i++)
     {
         char buf[100];
-        sprintf(buf, "./print.sh %d %d", 5, core->hilos[i].id);
+        sprintf(buf, "bash print.sh %d %d", 5, core->hilos[i].id);
         system(buf);;
         verHilo(&core->hilos[i]);
     }
@@ -138,7 +138,7 @@ void verCPU(CPU *cpu)
     char buf[100];
     for (i = 0; i < cpu->numCores; i++)
     {
-        sprintf(buf, "./print.sh %d %d", 4, cpu->cores[i].id);
+        sprintf(buf, "bash print.sh %d %d", 4, cpu->cores[i].id);
         system(buf);
         verCore(&cpu->cores[i]);
     }
@@ -148,12 +148,12 @@ void verEstado(MACHINE *machine)
 {
     int i;
     char buf[100];
-    sprintf(buf, "./print.sh %d", 2);
+    sprintf(buf, "bash print.sh %d", 2);
     system(buf);
 
     for (i = 0; i < machine->numCpus; i++)
     {
-        sprintf(buf, "./print.sh %d %d", 3, machine->cpus[i].id);
+        sprintf(buf, "bash print.sh %d %d", 3, machine->cpus[i].id);
         system(buf);
         verCPU(&machine->cpus[i]);
     }
