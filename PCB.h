@@ -57,6 +57,5 @@ void verPCB(PCB *pcb){
     char buf[100];
     sprintf(buf, "bash print.sh %d %d %d %d %d", 6,  pcb->pid, pcb->tiempoVida, pcb->tiempototal,  pcb->numPrioridad);
     system(buf);
-    //printf("PCB = %2d      Tiempo de Vida = %2d de %2d      Prioridad = %2d \n", pcb->pid, pcb->tiempoVida, pcb->tiempototal,  pcb->numPrioridad);
     return;
 }

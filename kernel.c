@@ -132,6 +132,10 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/**************************************************************
+ *******************   INICIALIZACION *************************
+ *************************************************************/
+
 void start(int cpus, int cores, int hilos)
 {
     memoria.proceso = 0;
@@ -144,6 +148,10 @@ void start(int cpus, int cores, int hilos)
     pthread_mutex_init(&mutexTimer, NULL);
     pthread_mutex_init(&mutexSec, NULL);
 }
+
+/**************************************************************
+ ***************   CONTROL DE LA MAQUINA **********************
+ *************************************************************/
 
 void *clock_(void *c)
 {
@@ -235,6 +243,10 @@ void *scheduler(void *s)
     }
 }
 
+/**************************************************************
+ ***************** FUNCIONES AUXILIARES ***********************
+ *************************************************************/
+
 int crearTiempoVida()
 {
 
@@ -247,6 +259,9 @@ int crearNumPrioridad()
     return ((rand() % PRIORIDADES) + 1);
 }
 
+/**************************************************************
+ ******************** LIBERAR MEMORIA *************************
+ *************************************************************/
 void borrarDatos()
 {
     borrarColas(queuesstruct);
