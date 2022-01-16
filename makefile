@@ -1,1 +1,1 @@
-gcc kernel.c -o kernel -pthread
+gcc kernel.c -o kernel --pthread

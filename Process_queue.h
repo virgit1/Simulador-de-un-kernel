@@ -102,7 +102,7 @@ PCB *primero(Process_queue *q)
     if (q->tam == 0)
     {
         printf("Cola Vacia\n");
-        return crearPCB(0, 0, 0);
+        return createEmptyPCB();
     }
     PCB *pcb = &q->pcbs[q->primero];
     return pcb;
@@ -118,7 +118,7 @@ PCB *primeroEnCola(QueuesStruct *qs)
             return primero(&qs->queues[i]);
         }
     }
-    return crearPCB(0, 0, 0);
+    return createEmptyPCB();
 }
 
 void addEnCola(Process_queue *q, PCB *proceso)

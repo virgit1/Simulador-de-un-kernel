@@ -159,10 +159,6 @@ void verEstado(MACHINE *machine)
     }
 }
 
-/**************************************************************
- *************   VER ESTADO DE LA ESTRUCTURA   ****************
- *************************************************************/
-
 int insertarPCBenHilo(Hilo *hilo, PCB *pcb)
 {
     if (hilo->free == 1)
@@ -223,42 +219,43 @@ int insertarPCB(MACHINE *machine, PCB *pcb)
  **********   CONTROL DEL TIEMPO EN LOS PROCESOS  *************
  *************************************************************/
 
-void downTimeHilo(Hilo *hilo)
+void ejecutarHilo(Physical *physicalmemory, Hilo *hilo)
 {
     if (hilo->free == 0)
     {
-        if (downTimePCB(hilo->pcb) == 1)
+        if (ejecutarInstruccionPCB(physicalmemory,hilo->pcb) == 1)
         {
-            hilo->pcb = crearPCB(0, 0, 0);
+            vaciarMemoriaPCB(physicalmemory,hilo->pcb);
+            hilo->pcb = createEmptyPCB();
             hilo->free = 1;
         }
     }
 }
 
-void downTimeCore(Core *core)
+void ejecutarCore(Physical *physicalmemory, Core *core)
 {
     int i;
     for (i = 0; i < core->numHilos; i++)
     {
-        downTimeHilo(&core->hilos[i]);
+        ejecutarHilo(physicalmemory,&core->hilos[i]);
     }
 }
 
-void downTimeCPU(CPU *cpu)
+void ejecutarCPU(Physical *physicalmemory, CPU *cpu)
 {
     int i;
     for (i = 0; i < cpu->numCores; i++)
     {
-        downTimeCore(&cpu->cores[i]);
+        ejecutarCore(physicalmemory,&cpu->cores[i]);
     }
 }
 
-void downTime(MACHINE *machine)
+void ejecutarMACHINE(Physical *physicalmemory, MACHINE *machine)
 {
     int i;
     for (i = 0; i < machine->numCpus; i++)
     {
-        downTimeCPU(&machine->cpus[i]);
+        ejecutarCPU(physicalmemory, &machine->cpus[i]);
     }
 }
 
@@ -273,7 +270,7 @@ void updateHilo(QueuesStruct *qs, Hilo *hilo)
     {
         minusPrioridadPCB(hilo->pcb);
         addCola(qs, hilo->pcb);
-        hilo->pcb = crearPCB(0, 0, 0);
+        hilo->pcb = createEmptyPCB();
         hilo->free = 1;
     }
 }

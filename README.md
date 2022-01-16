@@ -10,7 +10,7 @@ Para ejecutar el ejecutable que se crea se puede pedir la ayuda con:
 
 y sino un ejemplo sería:
 
-./kernel -c2 -n4 -t
+./kernel -c2 -n4 -t -m26
 
 
 Created by Alvaro Ramos.
